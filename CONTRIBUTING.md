@@ -6,7 +6,7 @@ Thank you for your interest in improving ArchFlow Studio!
 
 1. Clone your fork:
    ```bash
-   git clone https://github.com/rehanakbar/archflow-studio.git
+   git clone https://github.com/rehan67/archflow-studio.git
    cd archflow-studio
    ```
 

@@ -517,4 +517,4 @@ OK
 ## 📄 License & Credits
 
 * Released under the open-source [MIT License](LICENSE).
-* Architecture and implementation designed by **Rehan Akbar** ([GitHub](https://github.com/rehanakbar)).
+* Architecture and implementation designed by **Rehan Akbar** ([GitHub](https://github.com/rehan67)).
