@@ -1,0 +1,66 @@
+{
+  "image_size": [1200, 800],
+  "frames": 120,
+  "delay_ms": 30,
+  "defaults": {
+    "speed": 220,
+    "diameter": 16,
+    "color": "#00F0FF",
+    "glow": true,
+    "glow_radius": 6
+  },
+  "routes": [
+    {
+      "id": "client-to-gateway",
+      "points": [
+        [230, 400],
+        [330, 400]
+      ],
+      "color": "#00F0FF",
+      "speed": 200,
+      "diameter": 16,
+      "dot_count": 2,
+      "glow": true
+    },
+    {
+      "id": "gateway-to-service",
+      "points": [
+        [510, 400],
+        [610, 400]
+      ],
+      "color": "#CBA35C",
+      "speed": 200,
+      "diameter": 16,
+      "dot_count": 2,
+      "glow": true
+    },
+    {
+      "id": "service-to-cache",
+      "points": [
+        [800, 380],
+        [860, 380],
+        [860, 270],
+        [910, 270]
+      ],
+      "color": "#43E8BD",
+      "speed": 320,
+      "diameter": 14,
+      "dot_count": 1,
+      "glow": true
+    },
+    {
+      "id": "service-to-database",
+      "points": [
+        [800, 420],
+        [860, 420],
+        [860, 530],
+        [910, 530]
+      ],
+      "color": "#90B5FF",
+      "speed": 180,
+      "diameter": 16,
+      "dot_count": 1,
+      "glow": true
+    }
+  ]
+}

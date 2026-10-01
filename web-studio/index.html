@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ArchFlow Studio — Architecture Diagram Flow Motion</title>
+  <meta name="description" content="Turn static architecture diagrams, pipelines, and workflows into animated flow-dot motion. Built by Rehan Akbar.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Top Header -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="brand-badge">AF</div>
+        <div class="brand-text">
+          <h1>ArchFlow Studio</h1>
+          <span class="brand-tag">Architecture Flow Motion</span>
+        </div>
+      </div>
+
+        <button id="btn-load-architecture" class="btn btn-secondary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+          Cloud Architecture (Rehan)
+        </button>
+
+        <label class="btn btn-secondary upload-label">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload Diagram
+          <input type="file" id="input-diagram-file" accept="image/png, image/jpeg, image/svg+xml" style="display:none;">
+        </label>
+
+        <button id="btn-import-json" class="btn btn-secondary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
+          Import JSON
+        </button>
+
+        <button id="btn-export-json" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Export JSON
+        </button>
+
+        <button id="btn-record-video" class="btn btn-accent">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+          <span id="record-btn-text">Export Video</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Workspace -->
+    <div class="workspace-body">
+      <!-- Left Toolbar -->
+      <aside class="tool-sidebar">
+        <div class="tool-section">
+          <span class="tool-section-title">Mode</span>
+          <div class="mode-toggles">
+            <button id="tool-select" class="tool-btn active" title="Select & Edit Points (V)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 3 7.07 16.97 2.51-7.39 7.39-2.51L3 3z"/></svg>
+              <span>Select</span>
+            </button>
+            <button id="tool-draw" class="tool-btn" title="Draw New Route (P)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><circle cx="11" cy="11" r="2"/></svg>
+              <span>Add Route</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="tool-section">
+          <span class="tool-section-title">Viewport</span>
+          <div class="viewport-controls">
+            <button id="btn-zoom-in" class="icon-btn" title="Zoom In">+</button>
+            <span id="zoom-level">100%</span>
+            <button id="btn-zoom-out" class="icon-btn" title="Zoom Out">−</button>
+            <button id="btn-zoom-reset" class="icon-btn" title="Fit to Screen">⛶</button>
+          </div>
+        </div>
+
+        <div class="tool-section">
+          <span class="tool-section-title">Display Overlays</span>
+          <label class="switch-row">
+            <span>Show Guides & Arrows</span>
+            <input type="checkbox" id="chk-show-guides" checked>
+            <span class="slider-toggle"></span>
+          </label>
+          <label class="switch-row">
+            <span>Show Route Labels</span>
+            <input type="checkbox" id="chk-show-labels" checked>
+            <span class="slider-toggle"></span>
+          </label>
+          <label class="switch-row">
+            <span>Grid Coordinates</span>
+            <input type="checkbox" id="chk-show-crosshair" checked>
+            <span class="slider-toggle"></span>
+          </label>
+        </div>
+
+        <div class="tool-section drawing-guide" id="drawing-instructions" style="display:none;">
+          <div class="hint-card">
+            <strong>Drawing Mode Active:</strong>
+            <p>1. Click on diagram to place Start point.</p>
+            <p>2. Click along the line to add bends.</p>
+            <p>3. Double-click or press <em>Enter</em> to finish route.</p>
+            <button id="btn-finish-drawing" class="btn btn-sm btn-primary">Done Route</button>
+          </div>
+        </div>
+
+        <div class="tool-footer">
+          <div class="coord-display">
+            <span>X: <strong id="coord-x">0</strong></span>
+            <span>Y: <strong id="coord-y">0</strong></span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Center Canvas Viewport -->
+      <main class="canvas-viewport" id="canvas-viewport">
+        <div class="canvas-stage" id="canvas-stage">
+          <canvas id="main-canvas"></canvas>
+        </div>
+
+        <!-- Playback Control Bar -->
+        <div class="playback-bar">
+          <button id="btn-play-pause" class="playback-play-btn" title="Play / Pause (Space)">
+            <svg id="play-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            <svg id="pause-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="display:none;"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+          </button>
+
+          <div class="playback-timeline">
+            <span id="time-current">0.0s</span>
+            <input type="range" id="timeline-scrubber" min="0" max="1000" value="0" step="1">
+            <span id="time-total">4.5s</span>
+          </div>
+
+          <div class="playback-speed">
+            <button class="speed-btn active" data-speed="1">1x</button>
+            <button class="speed-btn" data-speed="0.5">0.5x</button>
+            <button class="speed-btn" data-speed="2">2x</button>
+          </div>
+
+          <div class="fps-badge">
+            <span id="fps-counter">60</span> FPS
+          </div>
+        </div>
+      </main>
+
+      <!-- Right Properties Panel -->
+      <aside class="properties-sidebar">
+        <div class="sidebar-header">
+          <h2>Routes & Motion</h2>
+          <span class="route-count-badge" id="route-count">0 routes</span>
+        </div>
+
+        <!-- Active Route Configuration -->
+        <div class="route-inspector" id="route-inspector">
+          <div class="empty-selection" id="empty-route-prompt">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <p>Select a route from the list or click on the canvas to customize its motion.</p>
+          </div>
+
+          <div class="inspector-form" id="inspector-form" style="display: none;">
+            <div class="form-row">
+              <label>Route ID</label>
+              <input type="text" id="route-id-input" class="text-input">
+            </div>
+
+            <div class="form-row">
+              <label>Dot Color</label>
+              <div class="color-picker-wrap">
+                <input type="color" id="route-color-input" class="color-picker">
+                <span id="route-color-hex" class="color-hex-tag">#00F0FF</span>
+              </div>
+              <div class="color-presets">
+                <button class="preset-dot" style="background:#00F0FF" data-color="#00F0FF" title="Teal Cyan"></button>
+                <button class="preset-dot" style="background:#43E8BD" data-color="#43E8BD" title="Mint Teal"></button>
+                <button class="preset-dot" style="background:#CBA35C" data-color="#CBA35C" title="Muted Gold"></button>
+                <button class="preset-dot" style="background:#F4F0E6" data-color="#F4F0E6" title="Warm Cream"></button>
+                <button class="preset-dot" style="background:#90B5FF" data-color="#90B5FF" title="Soft Blue"></button>
+                <button class="preset-dot" style="background:#E5C383" data-color="#E5C383" title="Amber Gold"></button>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="label-with-val">
+                <label>Speed (px/s)</label>
+                <span id="val-speed">250</span>
+              </div>
+              <input type="range" id="route-speed-input" min="50" max="800" value="250" step="10">
+            </div>
+
+            <div class="form-row">
+              <div class="label-with-val">
+                <label>Dot Diameter (px)</label>
+                <span id="val-diameter">16</span>
+              </div>
+              <input type="range" id="route-diameter-input" min="4" max="40" value="16" step="1">
+            </div>
+
+            <div class="form-row">
+              <div class="label-with-val">
+                <label>Multi-Dot Stream (Count)</label>
+                <span id="val-dot-count">1</span>
+              </div>
+              <input type="range" id="route-dot-count-input" min="1" max="8" value="1" step="1">
+            </div>
+
+            <div class="form-row">
+              <div class="label-with-val">
+                <label>Comet Trail Length</label>
+                <span id="val-trail">0</span>
+              </div>
+              <input type="range" id="route-trail-input" min="0" max="6" value="0" step="1">
+            </div>
+
+            <div class="form-row">
+              <label class="switch-row">
+                <span>Neon Glow Aura</span>
+                <input type="checkbox" id="chk-route-glow">
+                <span class="slider-toggle"></span>
+              </label>
+            </div>
+
+            <div class="form-actions">
+              <button id="btn-reverse-route" class="btn btn-sm btn-secondary">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                Reverse Flow
+              </button>
+              <button id="btn-delete-route" class="btn btn-sm btn-danger">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Routes List -->
+        <div class="routes-list-section">
+          <h3>Active Routes</h3>
+          <div class="routes-list" id="routes-container">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <input type="file" id="input-json-file" accept=".json" style="display:none;">
+
+  <script src="app.js"></script>
+</body>
+</html>

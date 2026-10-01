@@ -1,0 +1,21 @@
+{
+  "name": "archflow-studio",
+  "version": "1.0.0",
+  "description": "Animate arrows and connectors in architecture and DevOps diagrams with moving flow dots, multi-dot streams, glow effects, and GIF/MP4 export.",
+  "author": {
+    "name": "Rehan Akbar",
+    "url": "https://github.com/rehanakbar"
+  },
+  "homepage": "https://github.com/rehanakbar/archflow-studio#readme",
+  "repository": "https://github.com/rehanakbar/archflow-studio",
+  "license": "MIT",
+  "keywords": [
+    "architecture-diagrams",
+    "diagram-animation",
+    "devops-pipelines",
+    "flow-dots",
+    "gif",
+    "mp4",
+    "web-studio"
+  ]
+}
