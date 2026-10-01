@@ -43,15 +43,18 @@ body {
 
 /* Header */
 .app-header {
-  height: 62px;
+  min-height: 60px;
+  height: auto;
   background-color: rgba(26, 44, 70, 0.95);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 22px;
+  padding: 8px 18px;
+  gap: 12px;
   z-index: 30;
+  flex-wrap: wrap;
 }
 
 .header-brand {
@@ -96,7 +99,8 @@ body {
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 /* Buttons */
@@ -168,6 +172,9 @@ body {
 .workspace-body {
   display: flex;
   flex: 1;
+  min-height: 0;
+  min-width: 0;
+  width: 100%;
   position: relative;
   overflow: hidden;
 }
@@ -175,6 +182,7 @@ body {
 /* Tool Sidebar (Left) */
 .tool-sidebar {
   width: 235px;
+  flex-shrink: 0;
   background-color: var(--bg-secondary);
   border-right: 1px solid var(--border-color);
   display: flex;
@@ -183,6 +191,13 @@ body {
   gap: 20px;
   overflow-y: auto;
   z-index: 20;
+  transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+}
+
+.tool-sidebar.collapsed {
+  margin-left: -235px;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .tool-section {
@@ -358,6 +373,8 @@ body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  min-width: 0;
+  min-height: 0;
 }
 
 .canvas-stage {
@@ -467,12 +484,20 @@ body {
 /* Right Properties Panel */
 .properties-sidebar {
   width: 320px;
+  flex-shrink: 0;
   background-color: var(--bg-secondary);
   border-left: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto;
   z-index: 20;
+  transition: margin-right 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease;
+}
+
+.properties-sidebar.collapsed {
+  margin-right: -320px;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .sidebar-header {
@@ -694,4 +719,142 @@ input[type="range"] {
   font-family: 'JetBrains Mono', monospace;
   font-size: 11px;
   color: var(--text-dim);
+}
+
+/* Drag and Drop Overlay */
+.drag-drop-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(15, 27, 48, 0.92);
+  backdrop-filter: blur(10px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 60;
+  border: 2px dashed var(--accent-gold);
+}
+
+.drag-drop-overlay.active {
+  display: flex;
+}
+
+.drop-zone-card {
+  text-align: center;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  padding: 30px 40px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-panel);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.drop-zone-card h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 19px;
+  color: var(--text-main);
+}
+
+.drop-zone-card p {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Responsive Media Queries */
+@media (max-width: 1200px) {
+  .app-header {
+    padding: 8px 14px;
+    gap: 8px;
+  }
+  .header-actions {
+    gap: 6px;
+  }
+  .btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+  .tool-sidebar {
+    width: 210px;
+  }
+  .properties-sidebar {
+    width: 290px;
+  }
+  .tool-sidebar.collapsed {
+    margin-left: -210px;
+  }
+  .properties-sidebar.collapsed {
+    margin-right: -290px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .brand-tag {
+    display: none;
+  }
+  .app-header {
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 56px;
+    padding: 8px 12px;
+  }
+  .header-actions {
+    flex-wrap: wrap;
+  }
+  .playback-bar {
+    padding: 0 12px;
+    gap: 10px;
+  }
+  .fps-badge {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .app-header {
+    justify-content: center;
+    gap: 8px;
+  }
+  .header-brand {
+    width: 100%;
+    justify-content: center;
+  }
+  .header-actions {
+    width: 100%;
+    justify-content: center;
+  }
+  .header-actions .btn .btn-text {
+    display: none;
+  }
+  .header-actions .btn {
+    padding: 7px 10px;
+  }
+  .tool-sidebar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 240px;
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.6);
+    z-index: 40;
+  }
+  .tool-sidebar.collapsed {
+    margin-left: -240px;
+  }
+  .properties-sidebar {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 290px;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.6);
+    z-index: 40;
+  }
+  .properties-sidebar.collapsed {
+    margin-right: -290px;
+  }
+  .playback-speed {
+    display: none;
+  }
 }

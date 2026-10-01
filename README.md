@@ -34,7 +34,8 @@ Overlay smooth, glowing, moving dots along the arrows and connector lines of you
    - [Step 3: Draw Your First Flow Line (Point-and-Click)](#step-3-draw-your-first-flow-line-point-and-click)
    - [Step 4: Customize Dot Color, Speed, and Glow](#step-4-customize-dot-color-speed-and-glow)
    - [Step 5: Adjust Points with Drag-and-Drop](#step-5-adjust-points-with-drag-and-drop)
-   - [Step 6: Export Your Finished Animation](#step-6-export-your-finished-animation)
+   - [Step 6: Responsive Viewport & Full-Screen Canvas](#step-6-responsive-viewport--full-screen-canvas)
+   - [Step 7: Export Your Finished Animation](#step-7-export-your-finished-animation)
 5. [Enterprise Cloud Architecture Walkthrough](#-enterprise-cloud-architecture-walkthrough)
 6. [Part 2: Python CLI Guide (For Developers & Power Users)](#-part-2-python-cli-guide-for-developers--power-users)
    - [Prerequisites & Installation](#prerequisites--installation)
@@ -94,6 +95,14 @@ Choose the method that fits you best:
 
 The Web Studio is a complete visual app that runs right in your web browser. You don't need to write any code or install any video software.
 
+<div align="center">
+
+![ArchFlow Studio Web Portal Workspace](examples/web-studio-workspace.png)
+
+*ArchFlow Studio Visual Web Portal — Real-time 60 FPS motion editor, route inspector, timeline scrubber, and responsive workspace.*
+
+</div>
+
 ### Step 1: Open the Studio
 
 You have two easy ways to open it:
@@ -118,7 +127,8 @@ Then open your web browser and go to:
 When the Web Studio opens, you can either explore the pre-loaded enterprise architecture or use your own image:
 
 * **To try the pre-loaded architecture**: Click **Cloud Architecture (Rehan)** in the top navigation bar to load the complete enterprise cloud pipeline.
-* **To use your own diagram**: Click the **Upload Diagram** button in the top left, and select any `.png`, `.jpg`, or `.svg` file from your computer.
+* **To upload your own diagram**: Click the **Upload Diagram** button in the header and select any `.png`, `.jpg`, `.jpeg`, `.svg`, or `.webp` file from your computer.
+* **Drag-and-Drop**: You can also drag and drop any diagram image or `routes.json` file directly onto the canvas stage!
 
 > [!TIP]
 > **Recommended diagram dimensions**: For best results, use an image between `1200x800` (landscape) or `1080x1350` (portrait 4:5 for LinkedIn/Instagram).
@@ -181,7 +191,24 @@ If you placed a point slightly off-center:
 
 ---
 
-### Step 6: Export Your Finished Animation
+### Step 6: Responsive Viewport & Full-Screen Canvas
+
+ArchFlow Studio adapts smoothly across laptop, tablet, and wide desktop screens:
+* **Collapsible Sidebars**: Click the **Tools** or **Routes** buttons in the header (or press **`T`** / **`R`**) to collapse either panel.
+* **Full-Screen Canvas**: Collapsing both panels expands your diagram to fill the entire workspace—ideal for presentations, client demos, and clean video recording.
+* **Auto-Fit on Window Resize**: The canvas automatically re-calculates optimal scale whenever you resize your browser window.
+
+<div align="center">
+
+![ArchFlow Studio Full-Screen Canvas Mode](examples/web-studio-fullscreen.png)
+
+*Full-screen canvas mode with collapsed sidebars for clean diagram presentation and recording.*
+
+</div>
+
+---
+
+### Step 7: Export Your Finished Animation
 
 When you are happy with how your animation looks:
 
@@ -453,6 +480,8 @@ Work faster in the Web Studio with these built-in hotkeys:
 | :---: | :--- | :--- |
 | **`P`** | **Pen / Add Route** | Start drawing a new route path |
 | **`V`** | **Select / Edit** | Select routes and drag point handles |
+| **`T`** | **Toggle Tools** | Collapse or expand the left tools sidebar |
+| **`R`** | **Toggle Routes** | Collapse or expand the right routes properties panel |
 | **`Enter`** | **Finish Route** | Complete the current route being drawn |
 | **`Esc`** | **Cancel / Deselect** | Cancel the active route drawing or deselect current route |
 | **`Space`** | **Play / Pause** | Pause or resume the animation canvas |

@@ -86,20 +86,23 @@ class FlowStudio {
 
     this.routesContainer = document.getElementById('routes-container');
     this.routeCountBadge = document.getElementById('route-count');
+    this.dragDropOverlay = document.getElementById('drag-drop-overlay');
   }
 
   initEvents() {
     // Mode toggles
-    this.toolSelect.addEventListener('click', () => this.setTool('select'));
-    this.toolDraw.addEventListener('click', () => this.setTool('draw'));
-    this.btnFinishDrawing.addEventListener('click', () => this.finishCurrentDrawing());
+    if (this.toolSelect) this.toolSelect.addEventListener('click', () => this.setTool('select'));
+    if (this.toolDraw) this.toolDraw.addEventListener('click', () => this.setTool('draw'));
+    if (this.btnFinishDrawing) this.btnFinishDrawing.addEventListener('click', () => this.finishCurrentDrawing());
 
     // Playback
-    this.btnPlayPause.addEventListener('click', () => this.togglePlayback());
-    this.timelineScrubber.addEventListener('input', (e) => {
-      this.playbackTime = (parseFloat(e.target.value) / 1000) * this.totalDuration;
-      this.updateTimelineUI();
-    });
+    if (this.btnPlayPause) this.btnPlayPause.addEventListener('click', () => this.togglePlayback());
+    if (this.timelineScrubber) {
+      this.timelineScrubber.addEventListener('input', (e) => {
+        this.playbackTime = (parseFloat(e.target.value) / 1000) * this.totalDuration;
+        this.updateTimelineUI();
+      });
+    }
 
     // Speed multiplier buttons
     document.querySelectorAll('.speed-btn').forEach((btn) => {
@@ -111,23 +114,100 @@ class FlowStudio {
     });
 
     // Zoom buttons
-    document.getElementById('btn-zoom-in').addEventListener('click', () => this.setZoom(this.zoom + 0.1));
-    document.getElementById('btn-zoom-out').addEventListener('click', () => this.setZoom(this.zoom - 0.1));
-    document.getElementById('btn-zoom-reset').addEventListener('click', () => this.fitToScreen());
+    const btnZoomIn = document.getElementById('btn-zoom-in');
+    const btnZoomOut = document.getElementById('btn-zoom-out');
+    const btnZoomReset = document.getElementById('btn-zoom-reset');
+    if (btnZoomIn) btnZoomIn.addEventListener('click', () => this.setZoom(this.zoom + 0.1));
+    if (btnZoomOut) btnZoomOut.addEventListener('click', () => this.setZoom(this.zoom - 0.1));
+    if (btnZoomReset) btnZoomReset.addEventListener('click', () => this.fitToScreen());
 
     // Display checkboxes
-    document.getElementById('chk-show-guides').addEventListener('change', (e) => (this.showGuides = e.target.checked));
-    document.getElementById('chk-show-labels').addEventListener('change', (e) => (this.showLabels = e.target.checked));
-    document.getElementById('chk-show-crosshair').addEventListener('change', (e) => (this.showCrosshair = e.target.checked));
+    const chkGuides = document.getElementById('chk-show-guides');
+    const chkLabels = document.getElementById('chk-show-labels');
+    const chkCrosshair = document.getElementById('chk-show-crosshair');
+    if (chkGuides) chkGuides.addEventListener('change', (e) => (this.showGuides = e.target.checked));
+    if (chkLabels) chkLabels.addEventListener('change', (e) => (this.showLabels = e.target.checked));
+    if (chkCrosshair) chkCrosshair.addEventListener('change', (e) => (this.showCrosshair = e.target.checked));
 
     // File loading & export
     const btnArch = document.getElementById('btn-load-architecture');
     if (btnArch) btnArch.addEventListener('click', () => this.loadArchitecture());
-    document.getElementById('input-diagram-file').addEventListener('change', (e) => this.handleImageUpload(e));
-    document.getElementById('btn-import-json').addEventListener('click', () => document.getElementById('input-json-file').click());
-    document.getElementById('input-json-file').addEventListener('change', (e) => this.handleJSONImport(e));
-    document.getElementById('btn-export-json').addEventListener('click', () => this.exportJSON());
-    document.getElementById('btn-record-video').addEventListener('click', () => this.toggleVideoRecording());
+
+    const btnUpload = document.getElementById('btn-upload-diagram');
+    const inputDiagram = document.getElementById('input-diagram-file');
+    if (btnUpload && inputDiagram) {
+      btnUpload.addEventListener('click', (e) => {
+        e.preventDefault();
+        inputDiagram.click();
+      });
+      inputDiagram.addEventListener('change', (e) => this.handleImageUpload(e));
+    }
+
+    const btnImport = document.getElementById('btn-import-json');
+    const inputJson = document.getElementById('input-json-file');
+    if (btnImport && inputJson) {
+      btnImport.addEventListener('click', (e) => {
+        e.preventDefault();
+        inputJson.click();
+      });
+      inputJson.addEventListener('change', (e) => this.handleJSONImport(e));
+    }
+
+    const btnExport = document.getElementById('btn-export-json');
+    if (btnExport) btnExport.addEventListener('click', () => this.exportJSON());
+
+    const btnRecord = document.getElementById('btn-record-video');
+    if (btnRecord) btnRecord.addEventListener('click', () => this.toggleVideoRecording());
+
+    // Sidebar Toggles (Responsive & Full-Screen Canvas)
+    const btnToggleTools = document.getElementById('btn-toggle-tools');
+    if (btnToggleTools) {
+      btnToggleTools.addEventListener('click', () => this.toggleSidebar('tools'));
+    }
+
+    const btnToggleRoutes = document.getElementById('btn-toggle-routes');
+    if (btnToggleRoutes) {
+      btnToggleRoutes.addEventListener('click', () => this.toggleSidebar('routes'));
+    }
+
+    // Drag and Drop Diagram onto Viewport
+    if (this.viewport) {
+      this.viewport.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (this.dragDropOverlay) this.dragDropOverlay.classList.add('active');
+      });
+
+      this.viewport.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (e.relatedTarget === null || !this.viewport.contains(e.relatedTarget)) {
+          if (this.dragDropOverlay) this.dragDropOverlay.classList.remove('active');
+        }
+      });
+
+      this.viewport.addEventListener('drop', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (this.dragDropOverlay) this.dragDropOverlay.classList.remove('active');
+        const files = e.dataTransfer && e.dataTransfer.files;
+        if (files && files.length > 0) {
+          const file = files[0];
+          if (file.name.endsWith('.json') || file.type === 'application/json') {
+            this.loadJSONFromFile(file);
+          } else if (file.type.startsWith('image/')) {
+            this.loadImageFromFile(file);
+          } else {
+            alert('Unsupported file dropped. Please drop an image (.png, .jpg, .svg, .webp) or routes.json.');
+          }
+        }
+      });
+    }
+
+    // Responsive Window Resize -> Auto fit canvas
+    window.addEventListener('resize', () => {
+      this.fitToScreen();
+    });
 
     // Inspector changes
     this.routeIdInput.addEventListener('input', (e) => {
@@ -232,6 +312,10 @@ class FlowStudio {
       } else if (e.key === 'Escape' && this.activeTool === 'draw') {
         this.drawingPoints = [];
         this.setTool('select');
+      } else if (e.key === 't' || e.key === 'T') {
+        this.toggleSidebar('tools');
+      } else if (e.key === 'r' || e.key === 'R') {
+        this.toggleSidebar('routes');
       } else if ((e.key === 'Delete' || e.key === 'Backspace') && this.selectedRouteIndex >= 0) {
         this.routes.splice(this.selectedRouteIndex, 1);
         this.selectRoute(-1);
@@ -251,17 +335,40 @@ class FlowStudio {
   }
 
   setZoom(zoom) {
-    this.zoom = Math.max(0.2, Math.min(3.0, zoom));
-    this.zoomLevel.innerText = `${Math.round(this.zoom * 100)}%`;
+    this.zoom = Math.max(0.1, Math.min(3.0, zoom));
+    if (this.zoomLevel) {
+      this.zoomLevel.innerText = `${Math.round(this.zoom * 100)}%`;
+    }
     this.applyCanvasTransform();
   }
 
   fitToScreen() {
-    const stageWidth = this.stage.clientWidth - 40;
-    const stageHeight = this.stage.clientHeight - 40;
+    if (!this.stage || !this.imageSize || !this.imageSize[0] || !this.imageSize[1]) return;
+    const stageWidth = Math.max(60, this.stage.clientWidth - 40);
+    const stageHeight = Math.max(60, this.stage.clientHeight - 40);
     const scaleX = stageWidth / this.imageSize[0];
     const scaleY = stageHeight / this.imageSize[1];
-    this.setZoom(Math.min(scaleX, scaleY, 1.0));
+    this.setZoom(Math.max(0.1, Math.min(scaleX, scaleY, 1.0)));
+  }
+
+  toggleSidebar(panel) {
+    if (panel === 'tools') {
+      const sb = document.querySelector('.tool-sidebar');
+      if (sb) {
+        sb.classList.toggle('collapsed');
+        const btn = document.getElementById('btn-toggle-tools');
+        if (btn) btn.classList.toggle('active', !sb.classList.contains('collapsed'));
+      }
+    } else if (panel === 'routes') {
+      const sb = document.querySelector('.properties-sidebar');
+      if (sb) {
+        sb.classList.toggle('collapsed');
+        const btn = document.getElementById('btn-toggle-routes');
+        if (btn) btn.classList.toggle('active', !sb.classList.contains('collapsed'));
+      }
+    }
+    setTimeout(() => this.fitToScreen(), 50);
+    setTimeout(() => this.fitToScreen(), 280);
   }
 
   applyCanvasTransform() {
@@ -664,25 +771,43 @@ class FlowStudio {
       });
   }
 
-  handleImageUpload(e) {
-    const file = e.target.files[0];
+  loadImageFromFile(file) {
     if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert('Please upload a valid image file (PNG, JPG, SVG, WebP).');
+      return;
+    }
     const reader = new FileReader();
     reader.onload = (event) => {
-      this.image.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        this.image = img;
         this.imageLoaded = true;
-        this.imageSize = [this.image.naturalWidth, this.image.naturalHeight];
+        this.imageSize = [img.naturalWidth || 1200, img.naturalHeight || 800];
         this.canvas.width = this.imageSize[0];
         this.canvas.height = this.imageSize[1];
         this.fitToScreen();
       };
-      this.image.src = event.target.result;
+      img.onerror = () => {
+        alert('Could not decode the selected image file.');
+      };
+      img.src = event.target.result;
+    };
+    reader.onerror = () => {
+      alert('Error reading the selected image.');
     };
     reader.readAsDataURL(file);
   }
 
-  handleJSONImport(e) {
-    const file = e.target.files[0];
+  handleImageUpload(e) {
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      this.loadImageFromFile(file);
+    }
+    e.target.value = ''; // Always reset so the same file can be re-uploaded
+  }
+
+  loadJSONFromFile(file) {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -690,15 +815,34 @@ class FlowStudio {
         const data = JSON.parse(event.target.result);
         if (data.routes && Array.isArray(data.routes)) {
           this.routes = data.routes;
+          if (data.image_size && Array.isArray(data.image_size) && !this.imageLoaded) {
+            this.imageSize = data.image_size;
+            this.canvas.width = data.image_size[0];
+            this.canvas.height = data.image_size[1];
+          }
           this.routes.forEach((r) => this.updateRouteMetrics(r));
           this.selectRoute(this.routes.length > 0 ? 0 : -1);
           this.renderRoutesList();
+          this.fitToScreen();
+        } else {
+          alert('JSON does not contain a valid "routes" list.');
         }
       } catch (err) {
-        alert('Invalid JSON file format.');
+        alert('Invalid JSON file format: ' + err.message);
       }
     };
+    reader.onerror = () => {
+      alert('Error reading the selected JSON file.');
+    };
     reader.readAsText(file);
+  }
+
+  handleJSONImport(e) {
+    const file = e.target.files && e.target.files[0];
+    if (file) {
+      this.loadJSONFromFile(file);
+    }
+    e.target.value = ''; // Always reset
   }
 
   exportJSON() {
